@@ -19,6 +19,8 @@ const server = express() .use((req, res)=> {
 const io = socketIO(server);
 
 let users = [];
+let currentPlayer = null;
+let timeout = null;
 
 io.on('connection', (socket) => {
 
@@ -28,15 +30,29 @@ io.on('connection', (socket) => {
         socket.username = username;
 
         users.push(socket);
+
+        sendUsers();
+
+        if (users.lenght === 1) {
+            currentPlayer = socket;
+            switchPlayer();
+        }
+
     });
 
     socket.on('disconnect', () =>{
-        users = users.filter((user) =>{
+        users = users.filter((user) =>{ 
             return user !== socket
         });
 
         sendUsers();
     });
+
+    socket.on('line', (data) => {
+
+        socket.broadcast.emit('line', data);
+
+    })
 
 });
 
@@ -44,9 +60,22 @@ function sendUsers() {
     const usersData = users.map((user) =>{
 
         return {
-            username: user.username
+            username: user.username,
+            isActive: user === currentPlayer
         }
 
     });
     io.emit('users', usersData);
+}
+
+function switchPlayer () {
+
+    timeout = setTimeout(switchPlayer, 15000);
+
+    const indexCurrentPlayer = users.indexOf(currentPlayer);
+
+    currentPlayer = users[(indexCurrentPlayer + 1) % users.length];
+
+    sendUsers();
+
 }
