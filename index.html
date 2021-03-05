@@ -75,7 +75,15 @@
 
         socket.on('line', (data) => {
                 line(data.mouseX, data.mouseY, data.pmouseX, data.pmouseY);
-        })
+        });
+
+        socket.on('word', (nextWord) => {
+            alert(`you have to draw ${nextWord}`);
+        });
+
+        socket.on('clear', () => {
+            clear();
+        });
 
     </script>
 </body>

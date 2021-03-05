@@ -21,6 +21,7 @@ const io = socketIO(server);
 let users = [];
 let currentPlayer = null;
 let timeout = null;
+const words = ['pikacu', 'carapuce', 'salameche']
 
 io.on('connection', (socket) => {
 
@@ -33,7 +34,7 @@ io.on('connection', (socket) => {
 
         sendUsers();
 
-        if (users.lenght === 1) {
+        if (users.length === 1) {
             currentPlayer = socket;
             switchPlayer();
         }
@@ -77,5 +78,10 @@ function switchPlayer () {
     currentPlayer = users[(indexCurrentPlayer + 1) % users.length];
 
     sendUsers();
+
+    const nextWord = words[Math.floor(Math.random() * words.length)];
+    currentPlayer.emit('word', nextWord);
+
+    io.emit('clear'); 
 
 }
