@@ -10,6 +10,16 @@
 
     <ul class="users"></ul>
 
+    <form>
+        <label>
+            Color: <input type='color' class='color'>
+        </label>
+        <label>
+            Weight: <input type='range' class='weight'>
+        </label>
+
+    </form>
+
     <style>
         canvas{
             border: 1px solid;
@@ -32,6 +42,10 @@
         let canDraw = false;
 
         const usersList = document.querySelector('.users');
+        const colorInput = document.querySelector('.color');
+        const weightInput = document.querySelector('.weight');
+
+
         socket.on('users', (data) => {
 
             usersList.innerHTML ='';
@@ -60,6 +74,8 @@
         function mouseDragged() {
 
             if(!canDraw) return;
+            stroke(colorInput.value);
+            strokeWeight(weightInput.value);
 
             line(mouseX, mouseY, pmouseX, pmouseY);
 
@@ -68,12 +84,16 @@
                 mouseX,
                 mouseY,
                 pmouseX,
-                pmouseY
+                pmouseY,
+                color: colorInput.value,
+                weight: weightInput.value
 
             });
         }
 
         socket.on('line', (data) => {
+                stroke(data.color);
+                strokeWeight(data.weight);
                 line(data.mouseX, data.mouseY, data.pmouseX, data.pmouseY);
         });
 
