@@ -30,6 +30,14 @@ io.on('connection', (socket) => {
         users.push(socket);
     });
 
+    socket.on('disconnect', () =>{
+        users = users.filter((user) =>{
+            return user !== socket
+        });
+
+        sendUsers();
+    });
+
 });
 
 function sendUsers() {
@@ -40,4 +48,5 @@ function sendUsers() {
         }
 
     });
+    io.emit('users', usersData);
 }

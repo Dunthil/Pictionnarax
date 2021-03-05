@@ -8,6 +8,8 @@
 <body>
     <h1>Hello world</h1>
 
+    <ul class="users"></ul>
+
     <style>
         canvas{
             border: 1px solid;
@@ -22,6 +24,19 @@
         const username = prompt('What is your name ?');
 
         socket.emit('username', username);
+
+        const usersList = document.querySelector('.users');
+        socket.on('users', (data) => {
+
+            usersList.inneHTML =''
+
+            data.forEach((user) => {
+                const li = document.createElement('li');
+                li.innerHTML= user.username;
+                usersList.appendChild(li);
+            });
+
+        });
 
         function setup() {
 
